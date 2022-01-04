@@ -1,4 +1,5 @@
 const { task } = require("hardhat/config")
+const { HONK_ADDRESS } = require("@honkswapdex/sdk")
 
 const { ethers: { constants: { MaxUint256 }}} = require("ethers")
 
@@ -388,7 +389,15 @@ task("masterchef:withdraw", "MasterChef withdraw")
 task("bar:enter", "SushiBar enter")
 .addParam("amount", "Amount")
 .setAction(async function ({ amount }, { ethers: { getNamedSigner } }, runSuper) {
-  const sushi = await ethers.getContract("SushiToken")
+  // const sushi = await ethers.getContract("SushiToken")
+  let honkAddress;
+  if (chainId === "31337") {
+    honkAddress = (await deployments.get("HONKMock")).address;  // mock this
+  } else if (chainId in HONK_ADDRESS) {
+    honkAddress = HONK_ADDRESS[chainId].address;
+  } else {
+    throw Error("No HONK_ADDRESS!");
+  }
 
   const bar = await ethers.getContract("SushiBar")
 
@@ -400,7 +409,16 @@ task("bar:enter", "SushiBar enter")
 task("bar:leave", "SushiBar leave")
 .addParam("amount", "Amount")
 .setAction(async function ({ amount }, { ethers: { getNamedSigner } }, runSuper) {
-  const sushi = await ethers.getContract("SushiToken")
+  // const sushi = await ethers.getContract("SushiToken")
+  const chainId = await getChainId()
+  let honkAddress;
+  if (chainId === "31337") {
+    honkAddress = (await deployments.get("HONKMock")).address;  // mock this
+  } else if (chainId in HONK_ADDRESS) {
+    honkAddress = HONK_ADDRESS[chainId].address;
+  } else {
+    throw Error("No HONK_ADDRESS!");
+  }
 
   const bar = await ethers.getContract("SushiBar")
 

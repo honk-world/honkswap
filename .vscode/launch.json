@@ -28,19 +28,6 @@
       "cwd": "${workspaceFolder}"
     },
     {
-      "type": "node",
-      "request": "launch",
-      "name": "local deploy",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
-      "args": [
-        "test --verbose"
-      ],
-      "cwd": "${workspaceFolder}"
-    },
-    {
       "type": "node-terminal",
       "name": "Run Script: test",
       "request": "launch",

@@ -31,7 +31,7 @@
     "localhost:deploy": "hardhat --network localhost deploy",
     "smartbch:deploy": "hardhat --network smartbch deploy",
     "smartbch:export": "hardhat --network smartbch export --export exports/smartbch.json",
-    "smartbch-amber:deploy": "hardhat --network smartbch-amber deploy --gasprice 1050000000",
+    "smartbch-amber:deploy": "hardhat --network smartbch-amber deploy",
     "smartbch-amber:export": "hardhat --network smartbch-amber export --export exports/smartbch-amber.json",
     "export": "hardhat export --export-all exports/deployments.json",
     "test": "hardhat test --verbose",
