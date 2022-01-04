@@ -1,4 +1,5 @@
-const { HONK_ADDRESS } = require("@honkswapdex/sdk");
+// const { HONK_ADDRESS } = require("@honkswapdex/sdk");
+const { HONK_ADDRESS } = require("../../honkswap-sdk/dist/index.js");
 
 module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const { deploy } = deployments
@@ -11,8 +12,21 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   if (chainId === "31337") {
     honk = (await deployments.get("HONKMock"));  // mock this
   } else if (chainId in HONK_ADDRESS) {
-    honk = await ethers.getContract(`${HONK_ADDRESS[chainId].address}`);
-    console.log(JSON.stringify(honk));  
+    // abi
+    const abi = "";
+
+    // address
+    const address = "0x4693e8635011252dF8Bb689681A22Bd74c572147";
+  
+    // token
+    const honk = new ethers.Contract(address, abi, provider);
+
+
+    // console.log(`before: ${HONK_ADDRESS[chainId]} ${chainId}`);  
+    // honk = await ethers.getContract(`${HONK_ADDRESS[chainId]}`);
+    // // honk = await new ethers.Contract(`${HONK_ADDRESS[chainId]}`);
+    // console.log(`after: ${honk}`);  
+    // console.log(`honk: ${JSON.stringify(honk)}`);  
   } else {
     throw Error("No HONK_ADDRESS!");
   }
