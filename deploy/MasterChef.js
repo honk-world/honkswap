@@ -13,13 +13,19 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     honk = (await deployments.get("HONKMock"));  // mock this
   } else if (chainId in HONK_ADDRESS) {
     // abi
-    const abi = "";
+    // const abi = JSON.stringify(require('../abi/Honk.json'));
+    // console.log(`abi: ${abi}`);
 
-    // address
-    const address = "0x4693e8635011252dF8Bb689681A22Bd74c572147";
+    // // address
+    // const address = "0x4693e8635011252dF8Bb689681A22Bd74c572147";
+
+    // // provider
+    // const provider = ethers.getDefaultProvider("https://moeing.tech:9545")
   
-    // token
-    const honk = new ethers.Contract(address, abi, provider);
+    // // token
+    // const honk = new ethers.Contract(address, abi, provider);
+    const HonkContract = await ethers.getContractFactory("SushiToken"); // lets see if we can fake this
+    honk = await HonkContract.attach("0x4693e8635011252dF8Bb689681A22Bd74c572147");
 
 
     // console.log(`before: ${HONK_ADDRESS[chainId]} ${chainId}`);  
