@@ -6,33 +6,13 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
 
   const { deployer, dev } = await getNamedAccounts()
 
-  // const sushi = await ethers.getContract("SushiToken")
   const chainId = await getChainId()
   let honk;
   if (chainId === "31337") {
     honk = (await deployments.get("HONKMock"));  // mock this
   } else if (chainId in HONK_ADDRESS) {
-    // abi
-    // const abi = JSON.stringify(require('../abi/Honk.json'));
-    // console.log(`abi: ${abi}`);
-
-    // // address
-    // const address = "0x4693e8635011252dF8Bb689681A22Bd74c572147";
-
-    // // provider
-    // const provider = ethers.getDefaultProvider("https://moeing.tech:9545")
-  
-    // // token
-    // const honk = new ethers.Contract(address, abi, provider);
-    const HonkContract = await ethers.getContractFactory("SushiToken"); // lets see if we can fake this
-    honk = await HonkContract.attach("0x4693e8635011252dF8Bb689681A22Bd74c572147");
-
-
-    // console.log(`before: ${HONK_ADDRESS[chainId]} ${chainId}`);  
-    // honk = await ethers.getContract(`${HONK_ADDRESS[chainId]}`);
-    // // honk = await new ethers.Contract(`${HONK_ADDRESS[chainId]}`);
-    // console.log(`after: ${honk}`);  
-    // console.log(`honk: ${JSON.stringify(honk)}`);  
+    const HonkContract = await ethers.getContractFactory("HonkToken"); // lets see if we can fake this
+    honk = await HonkContract.attach(HONK_ADDRESS[chainId]);  
   } else {
     throw Error("No HONK_ADDRESS!");
   }
@@ -41,7 +21,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const endBlock = startBlock + (15684 * 14) // 15684 is approx blocks per day
   const { address } = await deploy("MasterChef", {
     from: deployer,
-    args: [honk, dev, "100000000000000000000", "0", endBlock],
+    args: [honk.address, dev, "100000000000000000000", "0", endBlock],
     log: true,
     deterministicDeployment: false
   })
@@ -66,4 +46,4 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
 }
 
 module.exports.tags = ["MasterChef"]
-module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiToken"]
+module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "HonkToken"]

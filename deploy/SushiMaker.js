@@ -1,21 +1,21 @@
-const { WBCH, HONK_ADDRESS } = require("@honkswapdex/sdk")
+const { WBCH } = require("@honkswapdex/sdk")
+const { HONK_ADDRESS } = require("../../honkswap-sdk/dist/index.js");
 
 module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts, deployments }) {
   const { deploy } = deployments
 
   const { deployer, dev } = await getNamedAccounts()
 
-  const chainId = await getChainId()
-
   const factory = await ethers.getContract("UniswapV2Factory")
   const bar = await ethers.getContract("SushiBar")
-  //const sushi = await ethers.getContract("SushiToken")
-
-  let honkAddress;
+  
+  const chainId = await getChainId()
+  let honk;
   if (chainId === "31337") {
-    honkAddress = (await deployments.get("HONKMock")).address;  // mock this
+    honk = (await deployments.get("HONKMock"));  // mock this
   } else if (chainId in HONK_ADDRESS) {
-    honkAddress = HONK_ADDRESS[chainId].address;
+    const HonkContract = await ethers.getContractFactory("HonkToken"); // lets see if we can fake this
+    honk = await HonkContract.attach(HONK_ADDRESS[chainId]);  
   } else {
     throw Error("No HONK_ADDRESS!");
   }
@@ -33,7 +33,7 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
 
   await deploy("SushiMaker", {
     from: deployer,
-    args: [factory.address, bar.address, sushi.address, wbchAddress],
+    args: [factory.address, bar.address, honk.address, wbchAddress],
     log: true,
     deterministicDeployment: false
   })
@@ -51,4 +51,4 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
 }
 
 module.exports.tags = ["SushiMaker"]
-module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiBar", "SushiToken"]
+module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiBar", "Honktoken"]
