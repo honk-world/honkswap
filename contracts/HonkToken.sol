@@ -34,7 +34,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * team to mitigate the well-known issues around setting allowances.
  * See {IERC20-approve}.
  */
-contract SushiToken is ERC20("HonkToken", "HONK"), ERC20Burnable, Ownable {
+contract HonkToken is ERC20("HonkToken", "HONK"), ERC20Burnable, Ownable {
     string private _documentUri;
     bytes32 private _documentHash;
     uint8 private _decimals;
