@@ -13,7 +13,7 @@ describe("MasterChef", function () {
     this.minter = this.signers[4]
 
     this.MasterChef = await ethers.getContractFactory("MasterChef")
-    this.SushiToken = await ethers.getContractFactory("SushiToken")
+    this.SushiToken = await ethers.getContractFactory("HonkToken")
     this.ERC20Mock = await ethers.getContractFactory("ERC20Mock", this.minter)
   })
 
@@ -105,6 +105,7 @@ describe("MasterChef", function () {
       await advanceBlockTo("89")
 
       await this.chef.connect(this.bob).deposit(0, "0") // block 90
+      // console.log(await this.sushi.balanceOf(this.bob.address))
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
       await advanceBlockTo("94")
 
@@ -113,6 +114,7 @@ describe("MasterChef", function () {
       await advanceBlockTo("99")
 
       await this.chef.connect(this.bob).deposit(0, "0") // block 100
+      // console.log((await this.sushi.balanceOf(this.bob.address)).toString())
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
       await advanceBlockTo("100")
 

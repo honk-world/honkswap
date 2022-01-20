@@ -3,7 +3,7 @@ import { expect } from "chai";
 
 describe("SushiBar", function () {
   before(async function () {
-    this.SushiToken = await ethers.getContractFactory("SushiToken")
+    this.SushiToken = await ethers.getContractFactory("HonkToken")
     this.SushiBar = await ethers.getContractFactory("SushiBar")
 
     this.signers = await ethers.getSigners()
