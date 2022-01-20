@@ -5,20 +5,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "hardhat node",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
-      "args": [
-        "node"
-      ],
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "amber deploy",
+      "name": "Deploy on Amber",
       "skipFiles": [
         "<node_internals>/**"
       ],
@@ -26,14 +13,19 @@
       "args": [
         "--network smartbch-amber deploy --gasprice 1050000000"
       ],
-      "cwd": "${workspaceFolder}"
+      "cwd": "${workspaceFolder}",
     },
     {
       "type": "node-terminal",
-      "name": "Run Script: test",
+      "name": "Run Tests",
       "request": "launch",
-      "command": "yarn run test",
-      "cwd": "${workspaceFolder}"
+      "command": "npx hardhat test",
+      "cwd": "${workspaceFolder}",
+      "smartStep": true, 
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ]
     }
   ]
 }
