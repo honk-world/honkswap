@@ -216,14 +216,18 @@ contract MasterChef is Ownable {
         if (lpSupply == 0) {
             pool.lastRewardBlock = block.number;
             return;
+            
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 sushiReward =
             multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(
                 totalAllocPoint
             );
-        sushi.mint(devaddr, sushiReward.div(10));
-        sushi.mint(address(this), sushiReward);
+
+        // We want to transfer balance instead of minting
+        safeSushiTransfer(devaddr, sushiReward.div(10));
+        safeSushiTransfer(address(this), sushiReward);
+
         pool.accSushiPerShare = pool.accSushiPerShare.add(
             sushiReward.mul(1e12).div(lpSupply)
         );
