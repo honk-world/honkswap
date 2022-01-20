@@ -17,11 +17,12 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     throw Error("No HONK_ADDRESS!");
   }
   
-  const startBlock = 989239
-  const endBlock = startBlock + (15684 * 14) // 15684 is approx blocks per day
+  // this is the bonus period, going to skip it
+  const honkPerBlock = "1455" // approx 25B in 3 years todo: make this early rewarded instead of linear
   const { address } = await deploy("MasterChef", {
     from: deployer,
-    args: [honk.address, dev, "100000000000000000000", "0", endBlock],
+    // _sushi, _devaddr, _sushiPerBlock, _startBlock, _bonusEndBlock // skip the bonus
+    args: [honk.address, dev, honkPerBlock, "0", "1"],
     log: true,
     deterministicDeployment: false
   })
