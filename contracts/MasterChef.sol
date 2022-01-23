@@ -117,6 +117,7 @@ contract MasterChef is Ownable {
         poolInfo.push(
             PoolInfo({
                 lpToken: _lpToken,
+
                 allocPoint: _allocPoint,
                 lastRewardBlock: lastRewardBlock,
                 accSushiPerShare: 0
@@ -225,7 +226,7 @@ contract MasterChef is Ownable {
             );
 
         // We want to transfer balance instead of minting
-        safeSushiTransfer(devaddr, sushiReward.div(10));
+        // safeSushiTransfer(devaddr, sushiReward.div(10)); Not rewarding because no mint
         safeSushiTransfer(address(this), sushiReward);
 
         pool.accSushiPerShare = pool.accSushiPerShare.add(
