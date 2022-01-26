@@ -3,11 +3,20 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 
   const { deployer } = await getNamedAccounts()
 
-  const sushi = await deployments.get("SushiToken")
+  const chainId = await getChainId()
+  let honk;
+  if (chainId === "31337") {
+    honk = await ethers.getContract("HonkToken")
+  } else if (chainId in HONK_ADDRESS) {
+    const HonkContract = await ethers.getContractFactory("HonkToken"); 
+    honk = await HonkContract.attach(HONK_ADDRESS[chainId]);  
+  } else {
+    throw Error("No HONK_ADDRESS!");
+  }
 
   await deploy("SushiBar", {
     from: deployer,
-    args: [sushi.address],
+    args: [honk.address],
     log: true,
     deterministicDeployment: false
   })
