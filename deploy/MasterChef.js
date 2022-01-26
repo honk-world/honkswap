@@ -9,13 +9,18 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const chainId = await getChainId()
   let honk;
   if (chainId === "31337") {
-    honk = (await deployments.get("HONKMock"));  // mock this
+    // honk = (await deployments.get("HonkToken"));  // mock this
+    honk = await ethers.getContract("HonkToken")
+    // const HonkContract = await ethers.getContractFactory("HonkToken"); // lets see if we can fake this
+    // honk = await HonkContract.attach(HONK_ADDRESS[chainId]);  
   } else if (chainId in HONK_ADDRESS) {
-    const HonkContract = await ethers.getContractFactory("HonkToken"); // lets see if we can fake this
+    const HonkContract = await ethers.getContractFactory("HonkToken"); 
     honk = await HonkContract.attach(HONK_ADDRESS[chainId]);  
   } else {
     throw Error("No HONK_ADDRESS!");
   }
+
+  // console.log(`honk: ${JSON.stringify(honk)}`)
   
   // this is the bonus period, going to skip it
   const honkPerBlock = "1455" // approx 25B in 3 years todo: make this early rewarded instead of linear

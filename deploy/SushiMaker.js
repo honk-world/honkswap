@@ -12,9 +12,9 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
   const chainId = await getChainId()
   let honk;
   if (chainId === "31337") {
-    honk = (await deployments.get("HONKMock"));  // mock this
+    honk = await ethers.getContract("HonkToken")
   } else if (chainId in HONK_ADDRESS) {
-    const HonkContract = await ethers.getContractFactory("HonkToken"); // lets see if we can fake this
+    const HonkContract = await ethers.getContractFactory("HonkToken"); 
     honk = await HonkContract.attach(HONK_ADDRESS[chainId]);  
   } else {
     throw Error("No HONK_ADDRESS!");
