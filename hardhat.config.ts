@@ -66,7 +66,7 @@ const config: HardhatUserConfig = {
       tags: ["test", "local"],
     },
     smartbch: {
-      url: "https://smartbch.fountainhead.cash/mainnet",
+      url: "https://global.uat.cash",
       accounts,
       chainId: 10000,
       live: true,

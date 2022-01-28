@@ -1,4 +1,7 @@
+const { HONK_ADDRESS } = require("../../honkswap-sdk/dist/index.js");
+
 module.exports = async function ({ getNamedAccounts, deployments }) {
+
   const { deploy } = deployments
 
   const { deployer } = await getNamedAccounts()

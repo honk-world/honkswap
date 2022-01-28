@@ -1,4 +1,3 @@
-// const { HONK_ADDRESS } = require("@honkswapdex/sdk");
 const { HONK_ADDRESS } = require("../../honkswap-sdk/dist/index.js");
 
 module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
@@ -9,10 +8,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const chainId = await getChainId()
   let honk;
   if (chainId === "31337") {
-    // honk = (await deployments.get("HonkToken"));  // mock this
-    honk = await ethers.getContract("HonkToken")
-    // const HonkContract = await ethers.getContractFactory("HonkToken"); // lets see if we can fake this
-    // honk = await HonkContract.attach(HONK_ADDRESS[chainId]);  
+    honk = await ethers.getContract("HonkToken") 
   } else if (chainId in HONK_ADDRESS) {
     const HonkContract = await ethers.getContractFactory("HonkToken"); 
     honk = await HonkContract.attach(HONK_ADDRESS[chainId]);  
@@ -37,13 +33,13 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     gasLimit: 5000000,
   }
 
-  // if (await sushi.owner() !== address) {
-  //   // Transfer Sushi Ownership to Chef
-  //   console.log("Transfer Sushi Ownership to Chef")
-  //   await (await sushi.transferOwnership(address, txOptions)).wait()
-  // }
-
   const masterChef = await ethers.getContract("MasterChef")
+  // // console.log(`${JSON.stringify(masterChef)}`)
+  // console.log(`masterChef owner: ${JSON.stringify(await masterChef.owner())}`)
+
+  // const timelock = await ethers.getContract("Timelock")
+  // console.log(`timelock owner: ${JSON.stringify(await timelock.owner())}`)
+
   if (await masterChef.owner() !== dev) {
     // Transfer ownership of MasterChef to dev
     console.log("Transfer ownership of MasterChef to dev")
