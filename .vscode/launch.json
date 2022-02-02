@@ -16,6 +16,19 @@
       "cwd": "${workspaceFolder}",
     },
     {
+      "type": "node",
+      "request": "launch",
+      "name": "Hardhat Test",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
+      "args": [
+        "test", "--network", "hardhat"
+      ],
+      "cwd": "${workspaceFolder}",
+    },
+    {
       "type": "node-terminal",
       "name": "Run Tests",
       "request": "launch",
