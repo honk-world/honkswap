@@ -43,7 +43,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   if (await masterChef.owner() !== dev) {
     // Transfer ownership of MasterChef to dev
     console.log("Transfer ownership of MasterChef to dev")
-    await (await masterChef.transferOwnership(dev, txOptions)).wait()
+    // await (await masterChef.transferOwnership(dev, txOptions)).wait()
   }
 }
 
