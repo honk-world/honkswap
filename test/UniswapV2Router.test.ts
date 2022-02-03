@@ -31,33 +31,39 @@ describe("UniswapV2Router", function () {
     this.dummy1 = await this.ERC20Mock.deploy("DummyToken1", "DT1", "10000000000")
     this.dummy2 = await this.ERC20Mock.deploy("DummyToken2", "DT2", "10000000000")
 
-    await this.dummy1.transfer(this.alice.address, "1000")
-    await this.dummy2.transfer(this.alice.address, "1000")
+    console.log(`addy 1: ${this.dummy1.address}`)
+    console.log(`addy 2: ${this.dummy2.address}`)
+
+    await this.dummy1.transfer(this.alice.address, "100000")
+    await this.dummy2.transfer(this.alice.address, "100000")
 
     this.router = await this.UniswapRouter.deploy(this.factory.address, this.dummy1.address)
     await this.router.deployed()
 
-
-    // addLiquidity(
-    //   address tokenA,
-    //   address tokenB,
-    //   uint amountADesired,
-    //   uint amountBDesired,
-    //   uint amountAMin,
-    //   uint amountBMin,
-    //   address to,
-    //   uint deadline
+    await this.dummy1.connect(this.alice).approve(this.router.address, "200") // over approve
+    await this.dummy2.connect(this.alice).approve(this.router.address, "300")
 
     const result = await this.router.addLiquidity(
-      this.dummy1.address,
-      this.dummy2.address,
-      100,
-      200,
-      100,
-      200,
-      this.alice.address,
-      10000000000
+      this.dummy1.address, // tokenA
+      this.dummy2.address, // tokenB
+      200, // amount A desired
+      300, // amount B desired
+      100, // amount A min
+      200, // amount B min
+      this.alice.address, // to
+      10000000000 // deadline
     )
+
+    // skip until I know how to handle ETH/WETH
+    // const result = await this.router.addLiquidityETH(
+    //   this.dummy2.address, // token
+    //   200, // amountTokenDesired
+    //   100, // amountTokenMin
+    //   100, // amountETHDesired
+    //   this.alice.address, // to
+    //   10000000000 // deadline
+    // )
+
     
     expect(result)
 
