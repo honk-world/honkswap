@@ -34,24 +34,24 @@ describe("UniswapV2Router", function () {
     console.log(`addy 1: ${this.dummy1.address}`)
     console.log(`addy 2: ${this.dummy2.address}`)
 
-    await this.dummy1.transfer(this.alice.address, "100000")
-    await this.dummy2.transfer(this.alice.address, "100000")
+    await this.dummy1.transfer(this.alice.address, "1000000000")
+    await this.dummy2.transfer(this.alice.address, "1000000000")
 
     this.router = await this.UniswapRouter.deploy(this.factory.address, this.dummy1.address)
     await this.router.deployed()
 
-    await this.dummy1.connect(this.alice).approve(this.router.address, "200") // over approve
-    await this.dummy2.connect(this.alice).approve(this.router.address, "300")
+    await this.dummy1.connect(this.alice).approve(this.router.address, "1000000000", { from: this.alice.address }) // over approve
+    await this.dummy2.connect(this.alice).approve(this.router.address, "1000000000", { from: this.alice.address })
 
     const result = await this.router.addLiquidity(
       this.dummy1.address, // tokenA
       this.dummy2.address, // tokenB
-      200, // amount A desired
-      300, // amount B desired
-      100, // amount A min
-      200, // amount B min
+      "1000000000", // amount A desired
+      "1000000000", // amount B desired
+      "500000000", // amount A min
+      "500000000", // amount B min
       this.alice.address, // to
-      10000000000 // deadline
+      "10000000000" // deadline
     )
 
     // skip until I know how to handle ETH/WETH
@@ -63,19 +63,8 @@ describe("UniswapV2Router", function () {
     //   this.alice.address, // to
     //   10000000000 // deadline
     // )
-
     
     expect(result)
-
-    // await expect(this.chef.connect(this.bob).dev(this.bob.address, { from: this.bob.address })).to.be.revertedWith("dev: wut?")
-
-    // await this.chef.connect(this.dev).dev(this.bob.address, { from: this.dev.address })
-
-    // expect(await this.chef.devaddr()).to.equal(this.bob.address)
-
-    // await this.chef.connect(this.bob).dev(this.alice.address, { from: this.bob.address })
-
-    // expect(await this.chef.devaddr()).to.equal(this.alice.address)
   })
 
   

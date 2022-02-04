@@ -1,9 +1,22 @@
 const { task } = require("hardhat/config")
+require("@nomiclabs/hardhat-web3");
 const { HONK_ADDRESS } = require("@honkswapdex/sdk")
 
-const { ethers: { constants: { MaxUint256 }}} = require("ethers")
+const { ethers: { constants: { MaxUint256 }}} = require("ethers");
+const { ethers: { BigNumber } } = require("ethers");
+const MaxApprove = BigNumber.from(999).mul(BigNumber.from(10).pow(18));
 
 task("accounts", "Prints the list of accounts", require("./accounts"))
+
+task("balance", "Prints an account's balance")
+  .addParam("account", "The account's address")
+  .setAction(async (taskArgs ) => {
+    const account = web3.utils.toChecksumAddress(taskArgs.account);
+    const balance = await web3.eth.getBalance(account);
+
+    console.log(web3.utils.fromWei(balance, "ether"), "ETH");
+  });
+
 task("gas-price", "Prints gas price").setAction(async function({ address }, { ethers }) {
   console.log("Gas price", (await ethers.provider.getGasPrice()).toString())
 })
@@ -41,13 +54,24 @@ task("feeder:return", "Return funds to feeder").setAction(async function({ addre
 task("erc20:approve", "ERC20 approve")
 .addParam("token", "Token")
 .addParam("spender", "Spender")
-.addOptionalParam("deadline", MaxUint256)
-.setAction(async function ({ token, spender, deadline }, { ethers: { getNamedSigner } }, runSuper) {
+// .addParam("amount", MaxApprove)
+.setAction(async function ({ token, spender, amount }, { ethers: { getSigner } }, runSuper) {
+  console.log('get the factory...')
   const erc20 = await ethers.getContractFactory("UniswapV2ERC20")
   
-  const slp = erc20.attach(token)   
+  console.log('attach the token instance...')
+  const tokenInstance = erc20.attach(token)   
   
-  await (await slp.connect(await getNamedSigner("dev")).approve(spender, deadline)).wait()    
+  console.log('get the signer...')
+  const signer = await getSigner("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
+
+  console.log("connecting the signer...")
+  const tokenWithSigner = await tokenInstance.connect(signer); 
+
+  console.log("approving...")
+  const MaxApprove = ethers.BigNumber.from(999).mul(ethers.BigNumber.from(10).pow(18));
+  // console.log(amount);
+  await tokenWithSigner.approve(spender, MaxApprove); 
 });
 
 task("factory:set-fee-to", "Factory set fee to")
@@ -110,13 +134,13 @@ task("router:add-liquidity", "Router add liquidity")
 // TODO: Test
 task("router:add-liquidity-eth", "Router add liquidity eth")
 .addParam("token", "Token")
-.addParam("tokenDesired", "Token Desired")
-.addParam("tokenMinimum", "Token Minimum")
-.addParam("ethMinimum", "ETH Minimum")
+.addParam("tokendesired", "Token Desired")
+.addParam("tokenminimum", "Token Minimum")
+.addParam("ethminimum", "ETH Minimum")
 .addParam("to", "To")
 .addOptionalParam("deadline", MaxUint256)
 .setAction(async function ({ token, tokenDesired, tokenMinimum, ethMinimum, to, deadline }, { ethers: { getNamedSigner } }, runSuper) {
-  const router = await ethers.getContract("UniswapV2Router")
+  const router = await ethers.getContract("UniswapV2Router02")
   await run("erc20:approve", { token, spender: router.address })
   await (await router.connect(await getNamedSigner("dev")).addLiquidityETH(token, tokenDesired, tokenMinimum, ethMinimum, to, deadline)).wait()    
 });
@@ -475,3 +499,46 @@ task("maker:serve", "SushiBar serve")
   console.log(`served ${servedCount} of ${allPairsLength}`)
 });
 
+task("faucet", "Sends ETH and tokens to an address")
+  .addParam("receiver", "The address that will receive them")
+  .setAction(async ({ receiver }) => {
+    if (network.name === "hardhat") {
+      console.warn(
+        "You are running the faucet task with Hardhat network, which" +
+          "gets automatically created and destroyed every time. Use the Hardhat" +
+          " option '--network localhost'"
+      );
+    }
+
+    // const addressesFile =
+    //   __dirname + "/../frontend/src/contracts/contract-address.json";
+
+    // if (!fs.existsSync(addressesFile)) {
+    //   console.error("You need to deploy your contract first");
+    //   return;
+    // }
+
+    // const addressJson = fs.readFileSync(addressesFile);
+    // const address = JSON.parse(addressJson);
+
+    // if ((await ethers.provider.getCode(address.Token)) === "0x") {
+    //   console.error("You need to deploy your contract first");
+    //   return;
+    // }
+
+    const token = await ethers.getContractAt("HonkToken", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9");
+    const [sender] = await ethers.getSigners();
+
+    console.log("honk token address balance", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", await token.totalSupply() )
+
+    const tx = await token.mint(receiver, 100);
+    await tx.wait();
+
+    const tx2 = await sender.sendTransaction({
+      to: receiver,
+      value: ethers.constants.WeiPerEther,
+    });
+    await tx2.wait();
+
+    console.log(`Transferred 1 ? and 100 ? to ${receiver}`);
+  });
