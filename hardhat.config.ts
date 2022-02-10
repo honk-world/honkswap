@@ -11,6 +11,7 @@ import "hardhat-spdx-license-identifier"
 import "hardhat-typechain"
 import "hardhat-watcher"
 import "solidity-coverage"
+import "@tenderly/hardhat-tenderly"
 import "./tasks"
 
 import { HardhatUserConfig } from "hardhat/types"
@@ -66,7 +67,7 @@ const config: HardhatUserConfig = {
       tags: ["test", "local"],
     },
     smartbch: {
-      url: "https://global.uat.cash",
+      url: "https://smartbch.fountainhead.cash/mainnet",
       accounts,
       chainId: 10000,
       live: true,
@@ -113,6 +114,10 @@ const config: HardhatUserConfig = {
     overwrite: false,
     runOnCompile: true,
   },
+  tenderly: {
+		username: "CoinFu",
+		project: "project"
+	},
   typechain: {
     outDir: "types",
     target: "ethers-v5",

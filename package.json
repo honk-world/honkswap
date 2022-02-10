@@ -1,6 +1,6 @@
 {
   "name": "@honkswapdex/core",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "types": "./types/index.ts",
   "description": "Core contracts for the HonkSwap protocol",
@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#e06e943",
-    "@honkswapdex/sdk": "^0.0.15",
+    "@honkswapdex/sdk": "^0.0.23",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "@nomiclabs/hardhat-solhint": "^2.0.0",
     "@nomiclabs/hardhat-waffle": "^2.0.0",
@@ -65,7 +65,7 @@
     "hardhat-preprocessor": "^0.1.0",
     "hardhat-spdx-license-identifier": "^2.0.0",
     "hardhat-typechain": "^0.3.5",
-    "hardhat-watcher": "^2.0.0", 
+    "hardhat-watcher": "^2.0.0",
     "mocha": "^9.1.4",
     "prettier": "^2.2.0",
     "prettier-plugin-solidity": "^1.0.0-beta.5",
@@ -77,6 +77,7 @@
   },
   "dependencies": {
     "@nomiclabs/hardhat-web3": "^2.0.0",
+    "@tenderly/hardhat-tenderly": "^1.0.13",
     "eip-712": "^0.4.3",
     "web3": "^1.7.0"
   }
