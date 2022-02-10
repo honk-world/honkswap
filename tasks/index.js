@@ -54,7 +54,7 @@ task("feeder:return", "Return funds to feeder").setAction(async function({ addre
 task("erc20:approve", "ERC20 approve")
 .addParam("token", "Token")
 .addParam("spender", "Spender")
-// .addParam("amount", MaxApprove)
+// .setAction(async ({ receiver }, { ethers: { getSigner } }) => {
 .setAction(async function ({ token, spender, amount }, { ethers: { getSigner } }, runSuper) {
   console.log('get the factory...')
   const erc20 = await ethers.getContractFactory("UniswapV2ERC20")
@@ -91,14 +91,14 @@ task("factory:get-fee-to", "Factory get fee to")
 });
 
 task("factory:get-pair", "Factory get pair")
-.addParam("tokenA", "Token A")
-.addParam("tokenB", "Token B")
-.setAction(async function ({ tokenA, tokenB }, { ethers: { getNamedSigner } }, runSuper) {
+.addParam("tokena", "Token A")
+.addParam("tokenb", "Token B")
+.setAction(async function ({ tokena, tokenb }, { ethers: { getNamedSigner } }, runSuper) {
   const factory = await ethers.getContract("UniswapV2Factory")
-  if (parseInt(tokenA.substring(2, 8), 16) > parseInt(tokenB.substring(2, 8), 16)) {
-    [tokenA, tokenB] = [tokenB, tokenA]
+  if (parseInt(tokena.substring(2, 8), 16) > parseInt(tokenb.substring(2, 8), 16)) {
+    [tokena, tokenb] = [tokenb, tokena]
   }
-  console.log(`${await (await factory.connect(await getNamedSigner('dev')).getPair(tokenA, tokenB))}`)
+  console.log(`${await (await factory.connect(await getNamedSigner('dev')).getPair(tokena, tokenb))}`)
 });
 
 task("factory:query", "Get pair code hash")
@@ -510,35 +510,28 @@ task("faucet", "Sends ETH and tokens to an address")
       );
     }
 
-    // const addressesFile =
-    //   __dirname + "/../frontend/src/contracts/contract-address.json";
-
-    // if (!fs.existsSync(addressesFile)) {
-    //   console.error("You need to deploy your contract first");
-    //   return;
-    // }
-
-    // const addressJson = fs.readFileSync(addressesFile);
-    // const address = JSON.parse(addressJson);
-
-    // if ((await ethers.provider.getCode(address.Token)) === "0x") {
-    //   console.error("You need to deploy your contract first");
-    //   return;
-    // }
-
-    const token = await ethers.getContractAt("HonkToken", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9");
+    const honk = await ethers.getContractAt("HonkToken", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9");
+    const weth = await ethers.getContractAt("WETH9Mock", "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
     const [sender] = await ethers.getSigners();
+    // console.log(await ethers.getSigners());
+    const signer = await ethers.getSigner("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266")
 
-    console.log("honk token address balance", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", await token.totalSupply() )
-
-    const tx = await token.mint(receiver, 100);
+    const tx = await honk.mint(receiver, 25000000000);
     await tx.wait();
 
-    const tx2 = await sender.sendTransaction({
-      to: receiver,
-      value: ethers.constants.WeiPerEther,
-    });
-    await tx2.wait();
+    // const tx3 = await weth.transfer(receiver, 25000000000);
+    // await tx3.wait();
+    // const wethWithSigner = await weth.connect(signer);
 
-    console.log(`Transferred 1 ? and 100 ? to ${receiver}`);
+    // console.log("depositing...")
+    // await wethWithSigner.deposit(25000000000)
+
+    // const tx2 = await sender.sendTransaction({
+    //   to: receiver,
+    //   value: ethers.constants.WeiPerEther,
+    // });
+    // await tx2.wait();
+
+    console.log("honk address balance", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", await honk.totalSupply() )
+    console.log("weth9mock address balance", "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512", await weth.totalSupply() )
   });
