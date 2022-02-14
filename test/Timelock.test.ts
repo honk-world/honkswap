@@ -11,7 +11,7 @@ describe("Timelock", function () {
     this.dev = this.signers[3]
     this.minter = this.signers[4]
 
-    this.SushiToken = await ethers.getContractFactory("HonkToken")
+    this.SushiToken = await ethers.getContractFactory("SushiToken")
     this.Timelock = await ethers.getContractFactory("Timelock")
     this.ERC20Mock = await ethers.getContractFactory("ERC20Mock", this.minter)
     this.MasterChef = await ethers.getContractFactory("MasterChef")

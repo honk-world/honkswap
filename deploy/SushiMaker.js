@@ -1,39 +1,29 @@
-const { WBCH } = require("@honkswapdex/sdk")
-const { HONK_ADDRESS } = require("../../honkswap-sdk/dist/index.js");
+const { WETH9 } = require("@mistswapdex/sdk")
 
 module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts, deployments }) {
   const { deploy } = deployments
 
   const { deployer, dev } = await getNamedAccounts()
 
+  const chainId = await getChainId()
+
   const factory = await ethers.getContract("UniswapV2Factory")
   const bar = await ethers.getContract("SushiBar")
+  const sushi = await ethers.getContract("SushiToken")
   
-  const chainId = await getChainId()
-  let honk;
-  if (chainId === "31337") {
-    honk = await ethers.getContract("HonkToken")
-  } else if (chainId in HONK_ADDRESS) {
-    const HonkContract = await ethers.getContractFactory("HonkToken"); 
-    honk = await HonkContract.attach(HONK_ADDRESS[chainId]);  
-  } else {
-    throw Error("No HONK_ADDRESS!");
-  }
-  
-  let wbchAddress;
+  let wethAddress;
   
   if (chainId === '31337') {
-    wbchAddress = (await deployments.get("WETH9Mock")).address
-  } else if (chainId in WBCH) {
-    // console.log(`WBCH: ${JSON.stringify(WBCH)}`)
-    wbchAddress = WBCH[chainId].address
+    wethAddress = (await deployments.get("WETH9Mock")).address
+  } else if (chainId in WETH9) {
+    wethAddress = WETH9[chainId].address
   } else {
-    throw Error("No WBCH!")
+    throw Error("No WETH!")
   }
 
   await deploy("SushiMaker", {
     from: deployer,
-    args: [factory.address, bar.address, honk.address, wbchAddress],
+    args: [factory.address, bar.address, sushi.address, wethAddress],
     log: true,
     deterministicDeployment: false
   })
@@ -51,4 +41,4 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
 }
 
 module.exports.tags = ["SushiMaker"]
-module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiBar", "Honktoken"]
+module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiBar", "SushiToken"]

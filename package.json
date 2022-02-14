@@ -1,9 +1,9 @@
 {
-  "name": "@honkswapdex/core",
-  "version": "0.0.4",
+  "name": "@mistswapdex/core",
+  "version": "0.0.3",
   "license": "MIT",
   "types": "./types/index.ts",
-  "description": "Core contracts for the HonkSwap protocol",
+  "description": "Core contracts for the MISTswap protocol",
   "files": [
     "abi",
     "artifacts",
@@ -15,20 +15,19 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/honk-world/honkswap.git"
+    "url": "git+https://github.com/mistswapdex/mistswap.git"
   },
   "bugs": {
-    "url": "https://github.com/honk-world/honkswap/issues"
+    "url": "https://github.com/mistswapdex/mistswap/issues"
   },
-  "homepage": "https://github.com/honk-world/honkswap#readme",
+  "homepage": "https://github.com/mistswapdex/mistswap#readme",
   "keywords": [
-    "honkswap",
+    "mistswap",
     "bitcoin-cash"
   ],
   "scripts": {
     "build": "hardhat compile",
     "console": "hardhat console",
-    "localhost:deploy": "hardhat --network localhost deploy",
     "smartbch:deploy": "hardhat --network smartbch deploy",
     "smartbch:export": "hardhat --network smartbch export --export exports/smartbch.json",
     "smartbch-amber:deploy": "hardhat --network smartbch-amber deploy",
@@ -43,7 +42,7 @@
   },
   "devDependencies": {
     "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#e06e943",
-    "@honkswapdex/sdk": "^0.0.23",
+    "@mistswapdex/sdk": "^0.0.11",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "@nomiclabs/hardhat-solhint": "^2.0.0",
     "@nomiclabs/hardhat-waffle": "^2.0.0",
@@ -57,16 +56,15 @@
     "dotenv": "^8.2.0",
     "ethereum-waffle": "^3.2.0",
     "ethers": "^5.0.0",
-    "hardhat": "^2.0.11",
+    "hardhat": "2.0.11",
     "hardhat-abi-exporter": "^2.0.8",
-    "hardhat-deploy": "^0.9.24",
-    "hardhat-deploy-ethers": "^0.3.0-beta.13",
+    "hardhat-deploy": "^0.7.0-beta.44",
+    "hardhat-deploy-ethers": "^0.3.0-beta.7",
     "hardhat-gas-reporter": "^1.0.0",
     "hardhat-preprocessor": "^0.1.0",
     "hardhat-spdx-license-identifier": "^2.0.0",
     "hardhat-typechain": "^0.3.5",
     "hardhat-watcher": "^2.0.0",
-    "mocha": "^9.1.4",
     "prettier": "^2.2.0",
     "prettier-plugin-solidity": "^1.0.0-beta.5",
     "solidity-coverage": "^0.7.13",
@@ -76,9 +74,6 @@
     "typescript": "^4.2.2"
   },
   "dependencies": {
-    "@nomiclabs/hardhat-web3": "^2.0.0",
-    "@tenderly/hardhat-tenderly": "^1.0.13",
-    "eip-712": "^0.4.3",
-    "web3": "^1.7.0"
+    "eip-712": "^0.4.3"
   }
 }

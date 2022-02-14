@@ -8,8 +8,6 @@ module.exports = async function ({
 
   const { deployer, dev } = await getNamedAccounts();
 
-  console.log(`deployer: ${deployer} dev: ${dev}`);
-
   await deploy("UniswapV2Factory", {
     from: deployer,
     args: [dev],

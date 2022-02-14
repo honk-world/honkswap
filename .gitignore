@@ -10,4 +10,3 @@ coverage.json
 .env
 .DS_Store
 yarn-error.log
-deployments/localhost

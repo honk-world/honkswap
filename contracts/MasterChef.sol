@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./HonkToken.sol";
+import "./SushiToken.sol";
 
 interface IMigratorChef {
     // Perform LP token migration from legacy UniswapV2 to SushiSwap.
@@ -56,7 +56,7 @@ contract MasterChef is Ownable {
         uint256 accSushiPerShare; // Accumulated SUSHIs per share, times 1e12. See below.
     }
     // The SUSHI TOKEN!
-    HonkToken public sushi;
+    SushiToken public sushi;
     // Dev address.
     address public devaddr;
     // Block number when bonus SUSHI period ends.
@@ -84,7 +84,7 @@ contract MasterChef is Ownable {
     );
 
     constructor(
-        HonkToken _sushi,
+        SushiToken _sushi,
         address _devaddr,
         uint256 _sushiPerBlock,
         uint256 _startBlock,
@@ -117,7 +117,6 @@ contract MasterChef is Ownable {
         poolInfo.push(
             PoolInfo({
                 lpToken: _lpToken,
-
                 allocPoint: _allocPoint,
                 lastRewardBlock: lastRewardBlock,
                 accSushiPerShare: 0
@@ -217,18 +216,14 @@ contract MasterChef is Ownable {
         if (lpSupply == 0) {
             pool.lastRewardBlock = block.number;
             return;
-            
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 sushiReward =
             multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(
                 totalAllocPoint
             );
-
-        // We want to transfer balance instead of minting
-        // safeSushiTransfer(devaddr, sushiReward.div(10)); Not rewarding because no mint
-        safeSushiTransfer(address(this), sushiReward);
-
+        sushi.mint(devaddr, sushiReward.div(10));
+        sushi.mint(address(this), sushiReward);
         pool.accSushiPerShare = pool.accSushiPerShare.add(
             sushiReward.mul(1e12).div(lpSupply)
         );

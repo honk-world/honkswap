@@ -1,29 +1,15 @@
-const { HONK_ADDRESS } = require("../../honkswap-sdk/dist/index.js");
-
 module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const { deploy } = deployments
 
   const { deployer, dev } = await getNamedAccounts()
 
-  const chainId = await getChainId()
-  let honk;
-  if (chainId === "31337") {
-    honk = await ethers.getContract("HonkToken") 
-  } else if (chainId in HONK_ADDRESS) {
-    const HonkContract = await ethers.getContractFactory("HonkToken"); 
-    honk = await HonkContract.attach(HONK_ADDRESS[chainId]);  
-  } else {
-    throw Error("No HONK_ADDRESS!");
-  }
-
-  // console.log(`honk: ${JSON.stringify(honk)}`)
+  const sushi = await ethers.getContract("SushiToken")
   
-  // this is the bonus period, going to skip it
-  const honkPerBlock = "1455" // approx 25B in 3 years todo: make this early rewarded instead of linear
+  const startBlock = 989239
+  const endBlock = startBlock + (15684 * 14) // 15684 is approx blocks per day
   const { address } = await deploy("MasterChef", {
     from: deployer,
-    // _sushi, _devaddr, _sushiPerBlock, _startBlock, _bonusEndBlock // skip the bonus
-    args: [honk.address, dev, honkPerBlock, "0", "1"],
+    args: [sushi.address, dev, "100000000000000000000", "0", endBlock],
     log: true,
     deterministicDeployment: false
   })
@@ -33,19 +19,19 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     gasLimit: 5000000,
   }
 
+  if (await sushi.owner() !== address) {
+    // Transfer Sushi Ownership to Chef
+    console.log("Transfer Sushi Ownership to Chef")
+    await (await sushi.transferOwnership(address, txOptions)).wait()
+  }
+
   const masterChef = await ethers.getContract("MasterChef")
-  // // console.log(`${JSON.stringify(masterChef)}`)
-  // console.log(`masterChef owner: ${JSON.stringify(await masterChef.owner())}`)
-
-  // const timelock = await ethers.getContract("Timelock")
-  // console.log(`timelock owner: ${JSON.stringify(await timelock.owner())}`)
-
   if (await masterChef.owner() !== dev) {
     // Transfer ownership of MasterChef to dev
     console.log("Transfer ownership of MasterChef to dev")
-    // await (await masterChef.transferOwnership(dev, txOptions)).wait()
+    await (await masterChef.transferOwnership(dev, txOptions)).wait()
   }
 }
 
 module.exports.tags = ["MasterChef"]
-module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "HonkToken"]
+module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiToken"]

@@ -11,15 +11,12 @@ import "hardhat-spdx-license-identifier"
 import "hardhat-typechain"
 import "hardhat-watcher"
 import "solidity-coverage"
-import "@tenderly/hardhat-tenderly"
 import "./tasks"
 
 import { HardhatUserConfig } from "hardhat/types"
 import { removeConsoleLog } from "hardhat-preprocessor"
 
 const accounts = [process.env.DEPLOYER_PRIVATE_KEY, process.env.DEV_PRIVATE_KEY]
-
-// console.log(`accounts: ${accounts}`)
 
 const config: HardhatUserConfig = {
   abiExporter: {
@@ -76,7 +73,6 @@ const config: HardhatUserConfig = {
     },
     "smartbch-amber": {
       url: "https://moeing.tech:9545",
-      // url: "http://35.220.203.194:8545/",
       accounts,
       chainId: 10001,
       live: true,
@@ -114,10 +110,6 @@ const config: HardhatUserConfig = {
     overwrite: false,
     runOnCompile: true,
   },
-  tenderly: {
-		username: "CoinFu",
-		project: "project"
-	},
   typechain: {
     outDir: "types",
     target: "ethers-v5",
