@@ -488,9 +488,9 @@
   dependencies:
     keccak "^3.0.0"
 
-"@mistswapdex/sdk@^0.0.11":
+"@honkswapdex/sdk@^0.0.11":
   version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@mistswapdex/sdk/-/sdk-0.0.11.tgz#b951dec9da12d701ebe4a03a5e7a7639450ae3bd"
+  resolved "https://registry.yarnpkg.com/@honkswapdex/sdk/-/sdk-0.0.11.tgz#b951dec9da12d701ebe4a03a5e7a7639450ae3bd"
   integrity sha512-P8yWH41ReWnK/XarXtPLgKYUDRKnUpqd8b8SyrRnCKnGbc5jl0dTAQYdXPUJVhRnFQmsYdO+HOiLNT8z6NfOuw==
   dependencies:
     big.js "^6.1.0"

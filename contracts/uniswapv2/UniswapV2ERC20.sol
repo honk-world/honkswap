@@ -7,8 +7,8 @@ import './libraries/SafeMath.sol';
 contract UniswapV2ERC20 {
     using SafeMathUniswap for uint;
 
-    string public constant name = 'MISTswap LP Token';
-    string public constant symbol = 'MLP';
+    string public constant name = 'HONKswap LP Token';
+    string public constant symbol = 'HLP';
     uint8 public constant decimals = 18;
     uint  public totalSupply;
     mapping(address => uint) public balanceOf;
