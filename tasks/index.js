@@ -457,3 +457,42 @@ task("maker:serve", "SushiBar serve")
   console.log(`served ${servedCount} of ${allPairsLength}`)
 });
 
+task("faucet", "Sends ETH and tokens to an address")
+  .addParam("receiver", "The address that will receive them")
+  .setAction(async ({ receiver }) => {
+    if (network.name === "hardhat") {
+      console.warn(
+        "You are running the faucet task with Hardhat network, which" +
+          "gets automatically created and destroyed every time. Use the Hardhat" +
+          " option '--network localhost'"
+      );
+    }
+
+    const token = await ethers.getContractAt("SushiToken", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9");
+    
+    // const [signer] = await ethers.getSigners()
+    const signer = await ethers.getSigner("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")
+    
+    const tokenWithSigner = await token.connect(signer);
+
+    
+
+    const tx = await tokenWithSigner.mint(receiver, 25000000000);
+    await tx.wait();
+
+    // const tx3 = await weth.transfer(receiver, 25000000000);
+    // await tx3.wait();
+    // const wethWithSigner = await weth.connect(signer);0x70997970c51812dc3a010c7d01b50e0d17dc79c8
+
+    // console.log("depositing...")
+    // await wethWithSigner.deposit(25000000000)
+
+    // const tx2 = await sender.sendTransaction({
+    //   to: receiver,
+    //   value: ethers.constants.WeiPerEther,
+    // });
+    // await tx2.wait();
+
+    // console.log("honk address balance", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", await honk.totalSupply() )
+    // console.log("weth9mock address balance", "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512", await weth.totalSupply() )
+  });
