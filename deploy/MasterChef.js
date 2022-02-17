@@ -14,6 +14,11 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     deterministicDeployment: false
   })
 
+  const chainId = await getChainId();
+  if(chainId === "31337") {
+    await sushi.mint(deployer, 1000000)
+  }
+
   const txOptions = {
     gasPrice: 1050000000,
     gasLimit: 5000000,

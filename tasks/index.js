@@ -460,25 +460,21 @@ task("maker:serve", "SushiBar serve")
 task("faucet", "Sends ETH and tokens to an address")
   .addParam("receiver", "The address that will receive them")
   .setAction(async ({ receiver }) => {
-    if (network.name === "hardhat") {
-      console.warn(
-        "You are running the faucet task with Hardhat network, which" +
-          "gets automatically created and destroyed every time. Use the Hardhat" +
-          " option '--network localhost'"
-      );
-    }
+    const SushiToken = await ethers.getContractFactory("SushiToken")
+    const [signer] = await ethers.getSigners()
+    const sushi = await SushiToken.connect(signer)
 
-    const token = await ethers.getContractAt("SushiToken", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9");
-    
-    // const [signer] = await ethers.getSigners()
-    const signer = await ethers.getSigner("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")
-    
-    const tokenWithSigner = await token.connect(signer);
+    await sushi.mint(signer.address, "1000000")
 
+    // const token = await ethers.getContractAt("SushiToken", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9");
     
+    // // const [signer] = await ethers.getSigners()
+    // const signer = await ethers.getSigner("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")
+    
+    // const tokenWithSigner = await token.connect(signer);
 
-    const tx = await tokenWithSigner.mint(receiver, 25000000000);
-    await tx.wait();
+    // const tx = await tokenWithSigner.mint(receiver, 25000000000);
+    // await tx.wait();
 
     // const tx3 = await weth.transfer(receiver, 25000000000);
     // await tx3.wait();
@@ -496,3 +492,49 @@ task("faucet", "Sends ETH and tokens to an address")
     // console.log("honk address balance", "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", await honk.totalSupply() )
     // console.log("weth9mock address balance", "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512", await weth.totalSupply() )
   });
+
+  task("getlogs", "Gets the logs from the router")
+    .setAction(async function ({ _ }, { ethers: { getNamedSigner } }, runSuper) {
+
+      const router = await ethers.getContract("UniswapV2Router02")
+
+      // const filter = router.filters.DebugEvent()
+
+      // const logs = await router.queryFilter( new EventFilter(), 0, 'latest')
+
+      console.log( await ethers.getBlockNumber() );
+  
+      const logs = await ethers.provider.getLogs({
+        fromBlock: 0,
+        toBlock: 'latest',
+        address: router.address,
+        topics: ["0xa8f368a48af00901f1c4bf15cc3f50409a4d2e0fe3a94291d65eff9352b32fac"]
+      })
+      // topic a8f368a48af00901f1c4bf15cc3f50409a4d2e0fe3a94291d65eff9352b32fac
+    
+      console.log("count: " + JSON.stringify(logs))
+      for (let log of logs) {
+        const parsed = router.interface.parseLog(log)
+        console.log(`${parsed.name}: ${parsed.args['signature']} contract:${parsed.args[1]} eta:${parsed.args['eta'].toString()} (${Number.parseInt(parsed.args['eta'].toString()) - ((+ new Date)/1000|0)} away) data:${parsed.args['data']}`)
+      }
+    })
+
+  // const init = async (ethers) => {
+
+  //   const router = await ethers.getContract("UniswapV2Router02")
+  
+  //   const logs = await ethers.provider.getLogs({
+  //     fromBlock: 0,
+  //     toBlock: 'latest',
+  //     address: router.address,
+  //   })
+  
+  //   for (let log of logs) {
+  //     const parsed = router.interface.parseLog(log)
+  //     console.log(`${parsed.name}: ${parsed.args['signature']} contract:${parsed.args[1]} eta:${parsed.args['eta'].toString()} (${Number.parseInt(parsed.args['eta'].toString()) - ((+ new Date)/1000|0)} away) data:${parsed.args['data']}`)
+  //   }
+  
+    // console.log("1")
+  // }
+  
+  // init(ethers);
