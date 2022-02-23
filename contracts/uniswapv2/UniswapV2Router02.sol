@@ -16,12 +16,6 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
     address public immutable override factory;
     address public immutable override WETH;
 
-    event DebugEvent (
-        uint indexed id,
-        uint indexed date,
-        string value
-    );
-
     modifier ensure(uint deadline) {
         require(deadline >= block.timestamp, 'UniswapV2Router: EXPIRED');
         _;
@@ -36,15 +30,6 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         assert(msg.sender == WETH); // only accept ETH via fallback from the WETH contract
     }
 
-    // function append(
-    //     string memory a, address b, address c, uint d, uint e, uint f, uint g
-    // ) internal pure returns (string memory) {
-
-    //     string memory s1 = string(abi.encodePacked(a, " ", b, " ", c, " ", d, " ", e, " ", f, " ", g));
-    //     return s1;
-
-    // }
-
     // **** ADD LIQUIDITY ****
     function _addLiquidity(
         address tokenA,
@@ -54,16 +39,6 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         uint amountAMin,
         uint amountBMin
     ) internal virtual returns (uint amountA, uint amountB) {
-
-        emit DebugEvent(1, now, string(abi.encodePacked(
-            "_addLiquidity, before create pair, params: ", 
-            tokenA, " ", 
-            tokenB, " ", 
-            amountADesired, " ", 
-            amountBDesired, " ", 
-            amountAMin, " ", 
-            amountBMin)));
-
         // create the pair if it doesn't exist yet
         if (IUniswapV2Factory(factory).getPair(tokenA, tokenB) == address(0)) {
             IUniswapV2Factory(factory).createPair(tokenA, tokenB);
