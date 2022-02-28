@@ -47,7 +47,7 @@ describe("Migrator", function () {
     this.migrator = await this.Migrator.deploy(this.chef.address, this.factory1.address, this.factory2.address, "0")
     await this.migrator.deployed()
 
-    await this.sushi.transferOwnership(this.chef.address)
+    //not honk await this.sushi.transferOwnership(this.chef.address)
 
     await this.chef.add("100", this.lp1.address, true)
   })

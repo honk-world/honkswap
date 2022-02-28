@@ -16,7 +16,8 @@ describe("MasterChefV2", function () {
       ["chef", this.MasterChef, [this.sushi.address, this.bob.address, getBigNumber(100), "0", "0"]],
     ])
 
-    await this.sushi.transferOwnership(this.chef.address)
+    //not honk await this.sushi.transferOwnership(this.chef.address)
+    await this.sushi.mint(this.chef.address, getBigNumber(1000000000))
     await this.chef.add(100, this.lp.address, true)
     await this.chef.add(100, this.dummy.address, true)
     await this.lp.approve(this.chef.address, getBigNumber(10))
@@ -186,6 +187,7 @@ describe("MasterChefV2", function () {
       expect(await this.chef2.lpToken(0)).to.be.equal(this.rlp.address)
       let log = await this.chef2.deposit(0, getBigNumber(1), this.alice.address)
       await advanceBlockTo(20)
+      console.log(await this.sushi.balanceOf(this.chef.address))
       await this.chef2.harvestFromMasterChef()
       let log2 = await this.chef2.withdraw(0, getBigNumber(1), this.alice.address)
       let expectedSushi = getBigNumber(100)

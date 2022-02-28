@@ -13,15 +13,15 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     log: true,
     deterministicDeployment: false
   })
-
-  const chainId = await getChainId();
-  if(chainId === "31337") {
-    await sushi.mint(deployer, 1000000)
-  }
-
+  
   const txOptions = {
     gasPrice: 1050000000,
     gasLimit: 5000000,
+  }
+
+  const chainId = await getChainId();
+  if(chainId === "31337" || chainId === "10001") {
+    await (await sushi.mint(dev, 10000000000, txOptions)).wait()
   }
 
   if (await sushi.owner() !== address) {

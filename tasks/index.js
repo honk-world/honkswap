@@ -498,21 +498,16 @@ task("faucet", "Sends ETH and tokens to an address")
 
       const router = await ethers.getContract("UniswapV2Router02")
 
-      // const filter = router.filters.DebugEvent()
-
-      // const logs = await router.queryFilter( new EventFilter(), 0, 'latest')
-
-      console.log( await ethers.getBlockNumber() );
+      console.log( `block: ${await ethers.provider.getBlockNumber()}` );
   
       const logs = await ethers.provider.getLogs({
         fromBlock: 0,
         toBlock: 'latest',
         address: router.address,
-        topics: ["0xa8f368a48af00901f1c4bf15cc3f50409a4d2e0fe3a94291d65eff9352b32fac"]
+        //topics: ["0xa8f368a48af00901f1c4bf15cc3f50409a4d2e0fe3a94291d65eff9352b32fac"]
       })
-      // topic a8f368a48af00901f1c4bf15cc3f50409a4d2e0fe3a94291d65eff9352b32fac
     
-      console.log("count: " + JSON.stringify(logs))
+      console.log("logs: " + JSON.stringify(logs))
       for (let log of logs) {
         const parsed = router.interface.parseLog(log)
         console.log(`${parsed.name}: ${parsed.args['signature']} contract:${parsed.args[1]} eta:${parsed.args['eta'].toString()} (${Number.parseInt(parsed.args['eta'].toString()) - ((+ new Date)/1000|0)} away) data:${parsed.args['data']}`)
