@@ -23,7 +23,8 @@ describe("MasterChef", function () {
   })
 
   it("should set correct state variables", async function () {
-    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "1000")
+    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "1000",
+    [10000, 0, 0, 0, 0, 0], [1768, 1061, 637, 382, 229, 137])
     await this.chef.deployed()
 
     //not honk await this.sushi.transferOwnership(this.chef.address)
@@ -38,7 +39,8 @@ describe("MasterChef", function () {
   })
 
   it("should allow dev and only dev to update dev", async function () {
-    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "1000")
+    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "1000",
+    [10000, 0, 0, 0, 0, 0], [1768, 1061, 637, 382, 229, 137])
     await this.chef.deployed()
 
     expect(await this.chef.devaddr()).to.equal(this.dev.address)
@@ -75,7 +77,8 @@ describe("MasterChef", function () {
 
     it("should allow emergency withdraw", async function () {
       // 100 per block farming rate starting at block 100 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "1000")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "1000",
+      [10000, 0, 0, 0, 0, 0], [1768, 1061, 637, 382, 229, 137])
       await this.chef.deployed()
 
       await this.chef.add("100", this.lp.address, true)
@@ -93,7 +96,8 @@ describe("MasterChef", function () {
 
     it("should give out SUSHIs only after farming time", async function () {
       // 100 per block farming rate starting at block 100 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "1000")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "1000",
+      [10000, 0, 0, 0, 0, 0], [1768, 1061, 637, 382, 229, 137])
       await this.chef.deployed()
 
       //not honk await this.sushi.transferOwnership(this.chef.address)
@@ -130,7 +134,8 @@ describe("MasterChef", function () {
 
     it("should not distribute SUSHIs if no one deposit", async function () {
       // 100 per block farming rate starting at block 200 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "200", "1000")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "200", "1000",
+      [10000, 0, 0, 0, 0, 0], [1768, 1061, 637, 382, 229, 137])
       await this.chef.deployed()
       //not honk await this.sushi.transferOwnership(this.chef.address)
       await this.sushi.mint(this.chef.address, "10000000000")
@@ -156,7 +161,8 @@ describe("MasterChef", function () {
 
     it("should distribute SUSHIs properly for each staker", async function () {
       // 100 per block farming rate starting at block 300 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "300", "1000")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "300", "1000",
+      [10000, 0, 0, 0, 0, 0], [1768, 1061, 637, 382, 229, 137])
       await this.chef.deployed()
       //not honk await this.sushi.transferOwnership(this.chef.address)
       await this.sushi.mint(this.chef.address, "10000000000")
@@ -225,7 +231,8 @@ describe("MasterChef", function () {
 
     it("should give proper SUSHIs allocation to each pool", async function () {
       // 100 per block farming rate starting at block 400 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "400", "1000")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "400", "1000",
+      [10000, 0, 0, 0, 0, 0], [1768, 1061, 637, 382, 229, 137])
       //not honk await this.sushi.transferOwnership(this.chef.address)
       await this.sushi.mint(this.chef.address, "10000000000")
       await this.lp.connect(this.alice).approve(this.chef.address, "1000", { from: this.alice.address })
@@ -253,7 +260,8 @@ describe("MasterChef", function () {
 
     it("should stop giving bonus SUSHIs after the bonus period ends", async function () {
       // 100 per block farming rate starting at block 500 with bonus until block 600
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "500", "600")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "500", "600",
+      [10000, 0, 0, 0, 0, 0], [1768, 1061, 637, 382, 229, 137])
       //not honk await this.sushi.transferOwnership(this.chef.address)
       await this.sushi.mint(this.chef.address, "10000000000")
       await this.lp.connect(this.alice).approve(this.chef.address, "1000", { from: this.alice.address })
@@ -272,51 +280,34 @@ describe("MasterChef", function () {
 
     it("should change rewards at proper block", async function () {
       // 100 per block farming rate starting at block 100 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "0")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "0",
+      [100, 110, 120, 130, 140, 150], [1768, 1061, 637, 382, 229, 137])
       await this.chef.deployed()
 
-      //not honk await this.sushi.transferOwnership(this.chef.address)
       await this.sushi.mint(this.chef.address, "10000000000")
 
-      await this.chef.add("100", this.lp.address, true)
+      await this.chef.add("1", this.lp.address, true)
 
       await this.lp.connect(this.bob).approve(this.chef.address, "1000")
-      await this.chef.connect(this.bob).deposit(0, "100")
-      await advanceBlockTo("89")
-
-      await this.chef.connect(this.bob).deposit(0, "0") // block 90
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
-      await advanceBlockTo("94")
-
-      await this.chef.connect(this.bob).deposit(0, "0") // block 95
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
-      await advanceBlockTo("99")
-
+      await advanceBlockTo("98")
+      await this.chef.connect(this.bob).deposit(0, "100") // block 99
       await this.chef.connect(this.bob).deposit(0, "0") // block 100
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
-      await advanceBlockTo("100")
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("1768")
 
-      await this.chef.connect(this.bob).deposit(0, "0") // block 101
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("17680")
+      await advanceBlockTo("109")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 110 
+      // 1768 + 10*1061
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("12378")
 
-      await advanceBlockTo("104")
-      await this.chef.connect(this.bob).deposit(0, "0") // block 105
-
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("88400")
-      //not honk expect(await this.sushi.balanceOf(this.dev.address)).to.equal("500")
-      expect(await this.sushi.totalSupply()).to.equal("10000000000")
+      await advanceBlockTo("150")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 151
+      // 12378 past reward range 
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("12378")
     })
 
-
-    // if (blocks < 2827620) return 1768;
-    //     if (blocks < 5655240) return 1061;
-    //     if (blocks < 8482860) return 637;
-    //     if (blocks < 11310480) return 382;
-    //     if (blocks < 14138100) return 229;
-    //     if (blocks < 16965720) return 137;
-
     it("should not reward if balance is empty", async function () {
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "0")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "0", 
+      [100, 120, 140, 160, 180, 200], [1768, 1061, 637, 382, 229, 137])
       await this.chef.deployed()
 
       // await this.sushi.mint(this.chef.address, "10000000000")

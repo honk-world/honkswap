@@ -19,7 +19,8 @@ describe("Timelock", function () {
 
   beforeEach(async function () {
     this.sushi = await this.SushiToken.deploy()
-    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "1000")
+    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "1000",
+    [10000, 0, 0, 0, 0, 0], [1768, 1061, 637, 382, 229, 137])
     //not honk await this.sushi.transferOwnership(this.chef.address)
     const delay = 259200;
     this.timelock = await this.Timelock.deploy(this.alice.address, delay)

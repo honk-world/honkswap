@@ -9,7 +9,9 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const endBlock = startBlock + (15684 * 14) // 15684 is approx blocks per day
   const { address } = await deploy("MasterChef", {
     from: deployer,
-    args: [sushi.address, dev, "100000000000000000000", "0", endBlock],
+    args: [sushi.address, dev, "100000000000000000000", "0", endBlock, 
+    [2827620, 5655240, 8482860, 11310480, 14138100, 16965720],
+    [1768, 1061, 637, 382, 229, 137]],
     log: true,
     deterministicDeployment: false
   })

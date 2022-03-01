@@ -188,12 +188,12 @@ contract MasterChef is Ownable {
         }
 
         uint256 blocks = block.number.sub(startBlock);
-        if (blocks < rewardBlocks[0]) return rewards[0];
-        if (blocks < rewardBlocks[1]) return rewards[1];
-        if (blocks < rewardBlocks[2]) return rewards[2];
-        if (blocks < rewardBlocks[3]) return rewards[3];
-        if (blocks < rewardBlocks[4]) return rewards[4];
-        if (blocks < rewardBlocks[5]) return rewards[5];
+        if (blocks <= rewardBlocks[0]) return rewards[0];
+        if (blocks <= rewardBlocks[1]) return rewards[1];
+        if (blocks <= rewardBlocks[2]) return rewards[2];
+        if (blocks <= rewardBlocks[3]) return rewards[3];
+        if (blocks <= rewardBlocks[4]) return rewards[4];
+        if (blocks <= rewardBlocks[5]) return rewards[5];
 
         return 0;
     }
