@@ -16,6 +16,7 @@ contract SushiBar is ERC20("HONKbar", "xHONK"){
     // Define the Sushi token contract
     constructor(IERC20 _sushi) public {
         sushi = _sushi;
+        _setupDecimals(2);
     }
 
     // Enter the bar. Pay some SUSHIs. Earn some shares.
