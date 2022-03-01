@@ -75,6 +75,9 @@ contract MasterChef is Ownable {
     uint256 public totalAllocPoint = 0;
     // The block number when SUSHI mining starts.
     uint256 public startBlock;
+    // the reward block structure
+    uint256[6] public rewardBlocks;
+    uint256[6] public rewards;
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event EmergencyWithdraw(
@@ -88,13 +91,17 @@ contract MasterChef is Ownable {
         address _devaddr,
         //uint256 _sushiPerBlock,
         uint256 _startBlock,
-        uint256 _bonusEndBlock
+        uint256 _bonusEndBlock,
+        uint256[6] memory _rewardBlocks,
+        uint256[6] memory _rewards
     ) public {
         sushi = _sushi;
         devaddr = _devaddr;
         // sushiPerBlock = _sushiPerBlock;
         bonusEndBlock = _bonusEndBlock;
         startBlock = _startBlock;
+        rewardBlocks = _rewardBlocks;
+        rewards = _rewards;
     }
 
     function poolLength() external view returns (uint256) {
@@ -181,12 +188,12 @@ contract MasterChef is Ownable {
         }
 
         uint256 blocks = block.number.sub(startBlock);
-        if (blocks < 2827620) return 1768;
-        if (blocks < 5655240) return 1061;
-        if (blocks < 8482860) return 637;
-        if (blocks < 11310480) return 382;
-        if (blocks < 14138100) return 229;
-        if (blocks < 16965720) return 137;
+        if (blocks < rewardBlocks[0]) return rewards[0];
+        if (blocks < rewardBlocks[1]) return rewards[1];
+        if (blocks < rewardBlocks[2]) return rewards[2];
+        if (blocks < rewardBlocks[3]) return rewards[3];
+        if (blocks < rewardBlocks[4]) return rewards[4];
+        if (blocks < rewardBlocks[5]) return rewards[5];
 
         return 0;
     }

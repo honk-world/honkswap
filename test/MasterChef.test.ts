@@ -269,5 +269,72 @@ describe("MasterChef", function () {
       expect(await this.chef.pendingSushi(0, this.alice.address)).to.equal("0")
       expect(await this.sushi.balanceOf(this.alice.address)).to.equal("187408")
     })
+
+    it("should change rewards at proper block", async function () {
+      // 100 per block farming rate starting at block 100 with bonus until block 1000
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "0")
+      await this.chef.deployed()
+
+      //not honk await this.sushi.transferOwnership(this.chef.address)
+      await this.sushi.mint(this.chef.address, "10000000000")
+
+      await this.chef.add("100", this.lp.address, true)
+
+      await this.lp.connect(this.bob).approve(this.chef.address, "1000")
+      await this.chef.connect(this.bob).deposit(0, "100")
+      await advanceBlockTo("89")
+
+      await this.chef.connect(this.bob).deposit(0, "0") // block 90
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
+      await advanceBlockTo("94")
+
+      await this.chef.connect(this.bob).deposit(0, "0") // block 95
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
+      await advanceBlockTo("99")
+
+      await this.chef.connect(this.bob).deposit(0, "0") // block 100
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
+      await advanceBlockTo("100")
+
+      await this.chef.connect(this.bob).deposit(0, "0") // block 101
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("17680")
+
+      await advanceBlockTo("104")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 105
+
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("88400")
+      //not honk expect(await this.sushi.balanceOf(this.dev.address)).to.equal("500")
+      expect(await this.sushi.totalSupply()).to.equal("10000000000")
+    })
+
+
+    // if (blocks < 2827620) return 1768;
+    //     if (blocks < 5655240) return 1061;
+    //     if (blocks < 8482860) return 637;
+    //     if (blocks < 11310480) return 382;
+    //     if (blocks < 14138100) return 229;
+    //     if (blocks < 16965720) return 137;
+
+    it("should not reward if balance is empty", async function () {
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "0")
+      await this.chef.deployed()
+
+      // await this.sushi.mint(this.chef.address, "10000000000")
+
+      await this.chef.add("1", this.lp.address, true) // create farm?
+
+      await this.lp.connect(this.bob).approve(this.chef.address, "1000")
+      // console.log( await ethers.provider.getBlockNumber())
+      // console.log( await ethers.provider.getBlockNumber())
+      await advanceBlockTo("99")
+      await this.chef.connect(this.bob).deposit(0, "100") // block 100
+
+      await this.chef.connect(this.bob).deposit(0, "0") // block 101
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
+
+      await advanceBlockTo("282") //2827621")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 2827622
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
+    })
   })
 })
