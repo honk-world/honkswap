@@ -62,7 +62,7 @@ contract MasterChef is Ownable {
     // Block number when bonus SUSHI period ends.
     uint256 public bonusEndBlock;
     // SUSHI tokens created per block.
-    uint256 public sushiPerBlock;
+    //uint256 public sushiPerBlock;
     // Bonus muliplier for early sushi makers.
     uint256 public constant BONUS_MULTIPLIER = 10;
     // The migrator contract. It has a lot of power. Can only be set through governance (owner).
@@ -86,13 +86,13 @@ contract MasterChef is Ownable {
     constructor(
         SushiToken _sushi,
         address _devaddr,
-        uint256 _sushiPerBlock,
+        //uint256 _sushiPerBlock,
         uint256 _startBlock,
         uint256 _bonusEndBlock
     ) public {
         sushi = _sushi;
         devaddr = _devaddr;
-        sushiPerBlock = _sushiPerBlock;
+        // sushiPerBlock = _sushiPerBlock;
         bonusEndBlock = _bonusEndBlock;
         startBlock = _startBlock;
     }
@@ -174,6 +174,23 @@ contract MasterChef is Ownable {
         }
     }
 
+    function getSushiPerBlock() internal view returns (uint256)
+    {
+        if (startBlock > block.number) {
+            return 0;
+        }
+
+        uint256 blocks = block.number.sub(startBlock);
+        if (blocks < 2827620) return 1768;
+        if (blocks < 5655240) return 1061;
+        if (blocks < 8482860) return 637;
+        if (blocks < 11310480) return 382;
+        if (blocks < 14138100) return 229;
+        if (blocks < 16965720) return 137;
+
+        return 0;
+    }
+
     // View function to see pending SUSHIs on frontend.
     function pendingSushi(uint256 _pid, address _user)
         external
@@ -188,7 +205,7 @@ contract MasterChef is Ownable {
             uint256 multiplier =
                 getMultiplier(pool.lastRewardBlock, block.number);
             uint256 sushiReward =
-                multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(
+                multiplier.mul(getSushiPerBlock()).mul(pool.allocPoint).div(
                     totalAllocPoint
                 );
             accSushiPerShare = accSushiPerShare.add(
@@ -219,7 +236,7 @@ contract MasterChef is Ownable {
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 sushiReward =
-            multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(
+            multiplier.mul(getSushiPerBlock()).mul(pool.allocPoint).div(
                 totalAllocPoint
             );
         

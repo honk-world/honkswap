@@ -23,7 +23,7 @@ describe("MasterChef", function () {
   })
 
   it("should set correct state variables", async function () {
-    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "1000", "0", "1000")
+    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "1000")
     await this.chef.deployed()
 
     //not honk await this.sushi.transferOwnership(this.chef.address)
@@ -38,7 +38,7 @@ describe("MasterChef", function () {
   })
 
   it("should allow dev and only dev to update dev", async function () {
-    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "1000", "0", "1000")
+    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "1000")
     await this.chef.deployed()
 
     expect(await this.chef.devaddr()).to.equal(this.dev.address)
@@ -75,7 +75,7 @@ describe("MasterChef", function () {
 
     it("should allow emergency withdraw", async function () {
       // 100 per block farming rate starting at block 100 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "100", "1000")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "1000")
       await this.chef.deployed()
 
       await this.chef.add("100", this.lp.address, true)
@@ -93,7 +93,7 @@ describe("MasterChef", function () {
 
     it("should give out SUSHIs only after farming time", async function () {
       // 100 per block farming rate starting at block 100 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "100", "1000")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "1000")
       await this.chef.deployed()
 
       //not honk await this.sushi.transferOwnership(this.chef.address)
@@ -118,19 +118,19 @@ describe("MasterChef", function () {
       await advanceBlockTo("100")
 
       await this.chef.connect(this.bob).deposit(0, "0") // block 101
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("1000")
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("17680")
 
       await advanceBlockTo("104")
       await this.chef.connect(this.bob).deposit(0, "0") // block 105
 
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("5000")
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("88400")
       //not honk expect(await this.sushi.balanceOf(this.dev.address)).to.equal("500")
       expect(await this.sushi.totalSupply()).to.equal("10000000000")
     })
 
     it("should not distribute SUSHIs if no one deposit", async function () {
       // 100 per block farming rate starting at block 200 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "200", "1000")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "200", "1000")
       await this.chef.deployed()
       //not honk await this.sushi.transferOwnership(this.chef.address)
       await this.sushi.mint(this.chef.address, "10000000000")
@@ -149,14 +149,14 @@ describe("MasterChef", function () {
       await advanceBlockTo("219")
       await this.chef.connect(this.bob).withdraw(0, "10") // block 220
       expect(await this.sushi.totalSupply()).to.equal("10000000000")
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("10000")
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("176800")
       expect(await this.sushi.balanceOf(this.dev.address)).to.equal("0")
       expect(await this.lp.balanceOf(this.bob.address)).to.equal("1000")
     })
 
     it("should distribute SUSHIs properly for each staker", async function () {
       // 100 per block farming rate starting at block 300 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "300", "1000")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "300", "1000")
       await this.chef.deployed()
       //not honk await this.sushi.transferOwnership(this.chef.address)
       await this.sushi.mint(this.chef.address, "10000000000")
@@ -180,25 +180,25 @@ describe("MasterChef", function () {
       await advanceBlockTo("317")
       await this.chef.connect(this.carol).deposit(0, "30", { from: this.carol.address })
       // Alice deposits 10 more LPs at block 320. At this point:
-      //   Alice should have: 4*1000 + 4*1/3*1000 + 2*1/6*1000 = 5666
+      //   Alice should have: 4*17680 + 4*1/3*17680 + 2*1/6*17680 = 5666
       //   MasterChef should have the remaining: 10000 - 5666 = 4334
       await advanceBlockTo("319")
       await this.chef.connect(this.alice).deposit(0, "10", { from: this.alice.address })
       expect(await this.sushi.totalSupply()).to.equal("10000000000")
-      expect(await this.sushi.balanceOf(this.alice.address)).to.equal("5666")
+      expect(await this.sushi.balanceOf(this.alice.address)).to.equal("100186")
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
       expect(await this.sushi.balanceOf(this.carol.address)).to.equal("0")
-      expect(await this.sushi.balanceOf(this.chef.address)).to.equal("9999994334")
+      expect(await this.sushi.balanceOf(this.chef.address)).to.equal("9999899814")
       expect(await this.sushi.balanceOf(this.dev.address)).to.equal("0")
       // Bob withdraws 5 LPs at block 330. At this point:
       //   Bob should have: 4*2/3*1000 + 2*2/6*1000 + 10*2/7*1000 = 6190
       await advanceBlockTo("329")
       await this.chef.connect(this.bob).withdraw(0, "5", { from: this.bob.address })
       expect(await this.sushi.totalSupply()).to.equal("10000000000")
-      expect(await this.sushi.balanceOf(this.alice.address)).to.equal("5666")
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("6190")
+      expect(await this.sushi.balanceOf(this.alice.address)).to.equal("100186")
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("109447")
       expect(await this.sushi.balanceOf(this.carol.address)).to.equal("0")
-      expect(await this.sushi.balanceOf(this.chef.address)).to.equal("9999988144")
+      expect(await this.sushi.balanceOf(this.chef.address)).to.equal("9999790367")
       expect(await this.sushi.balanceOf(this.dev.address)).to.equal("0")
       // Alice withdraws 20 LPs at block 340.
       // Bob withdraws 15 LPs at block 350.
@@ -212,11 +212,11 @@ describe("MasterChef", function () {
       expect(await this.sushi.totalSupply()).to.equal("10000000000")
       expect(await this.sushi.balanceOf(this.dev.address)).to.equal("0")
       // Alice should have: 5666 + 10*2/7*1000 + 10*2/6.5*1000 = 11600
-      expect(await this.sushi.balanceOf(this.alice.address)).to.equal("11600")
+      expect(await this.sushi.balanceOf(this.alice.address)).to.equal("205100")
       // Bob should have: 6190 + 10*1.5/6.5 * 1000 + 10*1.5/4.5*1000 = 11831
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("11831")
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("209181")
       // Carol should have: 2*3/6*1000 + 10*3/7*1000 + 10*3/6.5*1000 + 10*3/4.5*1000 + 10*1000 = 26568
-      expect(await this.sushi.balanceOf(this.carol.address)).to.equal("26568")
+      expect(await this.sushi.balanceOf(this.carol.address)).to.equal("469719")
       // All of them should have 1000 LPs back.
       expect(await this.lp.balanceOf(this.alice.address)).to.equal("1000")
       expect(await this.lp.balanceOf(this.bob.address)).to.equal("1000")
@@ -253,7 +253,7 @@ describe("MasterChef", function () {
 
     it("should stop giving bonus SUSHIs after the bonus period ends", async function () {
       // 100 per block farming rate starting at block 500 with bonus until block 600
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "100", "500", "600")
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "500", "600")
       //not honk await this.sushi.transferOwnership(this.chef.address)
       await this.sushi.mint(this.chef.address, "10000000000")
       await this.lp.connect(this.alice).approve(this.chef.address, "1000", { from: this.alice.address })
