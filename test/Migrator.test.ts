@@ -1,5 +1,6 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
+import { getBigNumber } from "./utilities"
 
 describe("Migrator", function () {
   before(async function () {
@@ -53,6 +54,7 @@ describe("Migrator", function () {
   })
 
   it("should do the migration successfully", async function () {
+    await this.sushi.mint(this.chef.address, getBigNumber(1000000000))
     await this.token.connect(this.minter).transfer(this.lp1.address, "10000000", { from: this.minter.address })
     await this.weth.connect(this.minter).transfer(this.lp1.address, "500000", { from: this.minter.address })
     await this.lp1.mint(this.minter.address)

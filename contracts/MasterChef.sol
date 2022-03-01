@@ -227,7 +227,7 @@ contract MasterChef is Ownable {
         //sushi.mint(devaddr, sushiReward.div(10));
         //sushi.mint(address(this), sushiReward);
 
-        sushi.transfer(address(this), sushiReward);
+        safeSushiTransfer(address(this), sushiReward);
 
         pool.accSushiPerShare = pool.accSushiPerShare.add(
             sushiReward.mul(1e12).div(lpSupply)
