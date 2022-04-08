@@ -1,17 +1,26 @@
+const { HONK_ADDRESS } = require("@honkswapdex/sdk");
+
 module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const { deploy } = deployments
 
   const { deployer, dev } = await getNamedAccounts()
+  const chainId = await getChainId()
 
-  const sushi = await ethers.getContract("SushiToken")
+  let rewardToken
+  if((chainId === "31337" || chainId === "10001") && await rewardToken.owner() == deployer.address) {
+    rewardToken = await ethers.getContract("SushiToken")
+  } else {
+    rewardToken = {}
+    rewardToken.address = HONK_ADDRESS[chainId]
+  }
   
-  const startBlock = 3329729
+  const startBlock = 3926552
   const endBlock = startBlock + 1 // effectively eliminate this
   const rewardBlocks = [2827620+startBlock, 5655240+startBlock, 8482860+startBlock, 11310480+startBlock, 14138100+startBlock, 16965720+startBlock]
   const rewards = [9549, 4244, 1273, 354, 124, 88]
   const { address } = await deploy("MasterChef", {
     from: deployer,
-    args: [sushi.address, dev, startBlock, endBlock, 
+    args: [rewardToken.address, dev, startBlock, endBlock, 
     rewardBlocks,
     rewards],
     log: true,
@@ -23,15 +32,14 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     gasLimit: 5000000,
   }
 
-  const chainId = await getChainId();
-  if((chainId === "31337" || chainId === "10001") && await sushi.owner() == deployer.address) {
-    await (await sushi.mint(dev, 10000000000, txOptions)).wait()
+  if((chainId === "31337" || chainId === "10001") && await rewardToken.owner() == deployer.address) {
+    await (await rewardToken.mint(dev, 10000000000, txOptions)).wait()
   }
 
-  // if (await sushi.owner() !== address) {
+  // if (await rewardToken.owner() !== address) {
   //   // Transfer Sushi Ownership to Chef
   //   console.log("Transfer Sushi Ownership to Chef")
-  //   await (await sushi.transferOwnership(address, txOptions)).wait()
+  //   await (await rewardToken.transferOwnership(address, txOptions)).wait()
   // }
 
   const masterChef = await ethers.getContract("MasterChef")
