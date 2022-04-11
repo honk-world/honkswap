@@ -14,9 +14,9 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     rewardToken.address = HONK_ADDRESS[chainId]
   }
   
-  const startBlock = 4000000
+  const startBlock = 3977413
   const endBlock = startBlock + 1 // effectively eliminate this
-  const rewardBlocks = [2827620+startBlock, 5655240+startBlock, 8482860+startBlock, 11310480+startBlock, 14138100+startBlock, 16965720+startBlock]
+  const rewardBlocks = [471270+startBlock, 1413810+startBlock, 2827620+startBlock, 5655240+startBlock, 11310480+startBlock, 16965720+startBlock]
   const rewards = [954967, 424485, 127316, 35465, 12478, 8841]
   const { address } = await deploy("MasterChef", {
     from: deployer,
