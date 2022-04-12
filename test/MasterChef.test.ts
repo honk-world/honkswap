@@ -56,6 +56,8 @@ describe("MasterChef", function () {
     expect(await this.chef.devaddr()).to.equal(this.alice.address)
   })
 
+  
+
   context("With ERC/LP token added to the field", function () {
     beforeEach(async function () {
       this.lp = await this.ERC20Mock.deploy("LPToken", "LP", "10000000000")
@@ -280,8 +282,8 @@ describe("MasterChef", function () {
 
     it("should change rewards at proper block", async function () {
       // 100 per block farming rate starting at block 100 with bonus until block 1000
-      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "0",
-      [100, 110, 120, 130, 140, 150], [1768, 1061, 637, 382, 229, 137])
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "200", "0",
+      [300, 310, 320, 330, 340, 350], [1768, 1061, 637, 382, 229, 137])
       await this.chef.deployed()
 
       await this.sushi.mint(this.chef.address, "10000000000")
@@ -292,17 +294,39 @@ describe("MasterChef", function () {
       await advanceBlockTo("98")
       await this.chef.connect(this.bob).deposit(0, "100") // block 99
       await this.chef.connect(this.bob).deposit(0, "0") // block 100
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
+
+      await advanceBlockTo("200")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 201
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("1768")
 
-      await advanceBlockTo("109")
-      await this.chef.connect(this.bob).deposit(0, "0") // block 110 
-      // 1768 + 10*1061
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("12378")
+      await advanceBlockTo("299")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 300
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("176800")
 
-      await advanceBlockTo("150")
-      await this.chef.connect(this.bob).deposit(0, "0") // block 151
+      await advanceBlockTo("309")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 310
+      // 176800 + 10 * 1061
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("187410")
+     
+      await advanceBlockTo("319")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 320
+      // 187410 + 10 * 637
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("193780")
+
+      await advanceBlockTo("329")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 330
+      await advanceBlockTo("339")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 340
+      await advanceBlockTo("349")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 350
+      // 193780 + 10 * (382, 229, 137)
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("201260")
+
+      await advanceBlockTo("360")
+      await this.chef.connect(this.bob).deposit(0, "0") // block 351
       // 12378 past reward range 
-      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("12378")
+      expect(await this.sushi.balanceOf(this.bob.address)).to.equal("201260")
     })
 
     it("should not reward if balance is empty", async function () {
@@ -327,5 +351,21 @@ describe("MasterChef", function () {
       await this.chef.connect(this.bob).deposit(0, "0") // block 2827622
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
     })
+
+    it("should be able transfer reward token to dev", async function () {
+      this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "0", "0", 
+      [100, 120, 140, 160, 180, 200], [1768, 1061, 637, 382, 229, 137])
+      await this.chef.deployed()
+  
+      await this.sushi.mint(this.chef.address, "10000000000")
+  
+      await this.chef.connect(this.dev).devWithdraw(50)
+  
+      expect(await this.sushi.balanceOf(this.dev.address)).to.equal("50")
+  
+      // await expect(await this.chef.connect(this.bob).devWithdraw(38)).to.be.revertedWith("dev: wut?")
+    })
+
+    
   })
 })

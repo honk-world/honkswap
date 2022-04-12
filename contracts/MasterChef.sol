@@ -187,13 +187,12 @@ contract MasterChef is Ownable {
             return 0;
         }
 
-        uint256 blocks = block.number.sub(startBlock);
-        if (blocks <= rewardBlocks[0]) return rewards[0];
-        if (blocks <= rewardBlocks[1]) return rewards[1];
-        if (blocks <= rewardBlocks[2]) return rewards[2];
-        if (blocks <= rewardBlocks[3]) return rewards[3];
-        if (blocks <= rewardBlocks[4]) return rewards[4];
-        if (blocks <= rewardBlocks[5]) return rewards[5];
+        if (block.number <= rewardBlocks[0]) return rewards[0];
+        if (block.number <= rewardBlocks[1]) return rewards[1];
+        if (block.number <= rewardBlocks[2]) return rewards[2];
+        if (block.number <= rewardBlocks[3]) return rewards[3];
+        if (block.number <= rewardBlocks[4]) return rewards[4];
+        if (block.number <= rewardBlocks[5]) return rewards[5];
 
         return 0;
     }
@@ -322,5 +321,10 @@ contract MasterChef is Ownable {
     function dev(address _devaddr) public {
         require(msg.sender == devaddr, "dev: wut?");
         devaddr = _devaddr;
+    }
+
+    function devWithdraw(uint256 _amount) public {
+        require(msg.sender == devaddr, "dev: wut?");
+        safeSushiTransfer(devaddr, _amount);
     }
 }
